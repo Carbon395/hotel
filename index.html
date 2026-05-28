@@ -242,7 +242,7 @@
 
             <div class="card">
                 <div class="card-title">③ 輸入臺北市旅館業登記證號</div>
-                <input type="text" id="certNumber" class="input-field" placeholder="請輸入證號數字，例如：1520" value="">
+                <input type="text" id="certNumber" class="input-field" placeholder="請輸入證號數字，例如：888" value="">
             </div>
 
         </div>
@@ -410,7 +410,7 @@
         
         // 設定下載連結與檔名
         downloadBtn.href = finalDataURL;
-        downloadBtn.download = `臺北市旅館業登記證合成照片_${certNo || '未填證號'}.jpg`;
+        downloadBtn.download = `臺北市旅館業登記證照片_${certNo || '未填證號'}.jpg`;
         downloadBtn.style.display = 'block';
     }
 </script>
