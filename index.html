@@ -14,7 +14,7 @@
         }
 
         body {
-            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            font-family: "Helvetica Neue", Helvetica, "PingFang TC", "Microsoft JhengHei", "Heiti TC", Arial, sans-serif;
             background-color: var(--bg-color);
             color: #2d3748;
             margin: 0;
@@ -45,6 +45,7 @@
             color: #718096;
             margin: 0;
             font-size: 15px;
+            font-weight: bold;
         }
 
         .main-layout {
@@ -101,6 +102,7 @@
         .upload-box p {
             margin: 8px 0 0 0;
             font-size: 14px;
+            font-weight: bold;
             color: #4a5568;
         }
 
@@ -114,6 +116,7 @@
             border: 1px solid #cbd5e0;
             border-radius: 6px;
             font-size: 16px;
+            font-weight: bold;
             font-family: inherit;
             box-sizing: border-box;
             transition: border 0.2s;
@@ -125,7 +128,6 @@
             box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
         }
 
-        /* 裁切視窗樣式 */
         .crop-container {
             width: 100%;
             max-height: 350px;
@@ -141,7 +143,6 @@
             display: block;
         }
 
-        /* 預覽與下載面板 */
         .preview-panel {
             position: sticky;
             top: 40px;
@@ -177,6 +178,7 @@
             font-size: 15px;
             text-align: center;
             padding: 20px;
+            font-weight: bold;
         }
 
         .btn-download {
@@ -201,7 +203,6 @@
             background: #22543d;
         }
 
-        /* 隱藏真實處理的畫布 */
         #hiddenCanvas {
             display: none;
         }
@@ -212,7 +213,7 @@
 <div class="wrapper">
     <header>
         <h1>臺北市旅館業照片與登記證製作系統</h1>
-        <p>臺北市政府觀光傳播局</p>
+        <p>臺北市政府觀光傳播局 版權所有</p>
     </header>
 
     <div class="main-layout">
@@ -222,7 +223,7 @@
                 <div class="card-title">① 上傳旅館實景照片並調整範圍</div>
                 <div class="upload-box" onclick="document.getElementById('photoFile').click()">
                     <svg style="width:32px;height:32px;margin:auto;fill:#718096" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
-                    <p>點擊上傳主要照片</p>
+                    <p>點擊上傳照片</p>
                 </div>
                 <input type="file" id="photoFile" accept="image/*">
                 
@@ -235,20 +236,20 @@
                 <div class="card-title">② 上傳圓形黃底「H」旅館標識</div>
                 <div class="upload-box" onclick="document.getElementById('logoFile').click()">
                     <svg style="width:32px;height:32px;margin:auto;fill:#718096" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.25z"/></svg>
-                    <p>點擊上傳旅館標識 Logo</p>
+                    <p>點擊上傳旅館標識</p>
                 </div>
                 <input type="file" id="logoFile" accept="image/*">
             </div>
 
             <div class="card">
                 <div class="card-title">③ 輸入臺北市旅館業登記證號</div>
-                <input type="text" id="certNumber" class="input-field" placeholder="請輸入證號數字，例如：888" value="">
+                <input type="text" id="certNumber" class="input-field" placeholder="請輸入證號數字，例如：000" value="000">
             </div>
 
         </div>
 
         <div class="preview-panel">
-            <div style="font-weight: bold; font-size: 15px; color: #4a5568;">【 1:1 方形合成照片效果預覽 】</div>
+            <div style="font-weight: bold; font-size: 15px; color: #4a5568;">【 照片預覽 】</div>
             <div class="preview-wrapper">
                 <div class="placeholder-text" id="placeholderText">請先完成左側「步驟 ①」上傳照片，系統將自動開啟裁切與即時預覽。</div>
                 <img id="resultPreview" alt="合成最終結果">
@@ -263,7 +264,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
 <script>
-    // 宣告全局變數
     let cropper = null;
     let uploadedLogoImg = null;
     
@@ -278,38 +278,66 @@
     const canvas = document.getElementById('hiddenCanvas');
     const ctx = canvas.getContext('2d');
 
-    // 1. 監聽主照片上傳並初始化自定義裁切工具
+    // Canvas 專用粗黑體字型設定
+    const zhFontSetting = 'bold 56px "Microsoft JhengHei", "PingFang TC", "Source Han Sans TC", sans-serif';
+    const enFontSetting = 'bold 32px "Helvetica Neue", Helvetica, Arial, sans-serif';
+
+    // 🚀 核心優化：前置相片壓縮處理，防止巨量像素摧毀 Canvas 記憶體
     photoFileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
 
         const reader = new FileReader();
         reader.onload = function(event) {
-            // 如果已有舊的裁切器則銷毀
-            if (cropper) {
-                cropper.destroy();
-            }
-            
-            cropImage.src = event.target.result;
-            cropContainer.style.display = 'block';
-            
-            // 初始化 Cropper：鎖定 1:1 方形、開啟精緻移動網格
-            cropper = new Cropper(cropImage, {
-                aspectRatio: 1,
-                viewMode: 1,
-                background: false,
-                autoCropArea: 1,
-                cropend: generateSynthesis, // 拖曳結束時自動重繪
-                zoom: generateSynthesis,    // 縮放時自動重繪
-                ready: function () {
-                    generateSynthesis();   // 載入完成立即初次繪製
+            const tempImg = new Image();
+            tempImg.onload = function() {
+                // 設定安全上限尺寸 (2000px)，既能維持超高解析印刷品質，又絕對不會讓瀏覽器崩潰
+                const maxSide = 2000;
+                let targetWidth = tempImg.width;
+                let targetHeight = tempImg.height;
+
+                if (targetWidth > maxSide || targetHeight > maxSide) {
+                    if (targetWidth > targetHeight) {
+                        targetHeight = Math.round((targetHeight * maxSide) / targetWidth);
+                        targetWidth = maxSide;
+                    } else {
+                        targetWidth = Math.round((targetWidth * maxSide) / targetHeight);
+                        targetHeight = maxSide;
+                    }
                 }
-            });
+
+                // 建立背景微型 Canvas 進行快速平滑壓縮
+                const resizeCanvas = document.createElement('canvas');
+                resizeCanvas.width = targetWidth;
+                resizeCanvas.height = targetHeight;
+                const resizeCtx = resizeCanvas.getContext('2d');
+                
+                // 啟動高品質縮放鋸齒優化
+                resizeCtx.imageSmoothingEnabled = true;
+                resizeCtx.imageSmoothingQuality = 'high';
+                resizeCtx.drawImage(tempImg, 0, 0, targetWidth, targetHeight);
+
+                // 導出安全體積的 Base64 數據給裁切器
+                const safeDataURL = resizeCanvas.toDataURL('image/jpeg', 0.95);
+
+                if (cropper) cropper.destroy();
+                
+                cropImage.src = safeDataURL;
+                cropContainer.style.display = 'block';
+                
+                cropper = new Cropper(cropImage, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    background: false,
+                    autoCropArea: 1,
+                    crop: function() { generateSynthesis(); }
+                });
+            };
+            tempImg.src = event.target.result;
         };
         reader.readAsDataURL(file);
     });
 
-    // 2. 監聽標識 Logo 上傳
     logoFileInput.addEventListener('change', function(e) {
         const file = e.target.files[0];
         if (!file) return;
@@ -319,98 +347,129 @@
             const img = new Image();
             img.onload = function() {
                 uploadedLogoImg = img;
-                generateSynthesis(); // 重新合成
+                generateSynthesis();
             };
             img.src = event.target.result;
         };
         reader.readAsDataURL(file);
     });
 
-    // 3. 監聽文字輸入即時重繪
     certNumberInput.addEventListener('input', generateSynthesis);
 
-    // 4. 高階核心合成運算
+    function drawDefaultLogo(context, x, y, size) {
+        context.save();
+        context.beginPath();
+        context.arc(x + size/2, y + size/2, size/2, 0, Math.PI * 2);
+        context.fillStyle = '#FFD700';
+        context.fill();
+
+        context.fillStyle = '#000000';
+        const fontSize = Math.floor(size * 0.65);
+        context.font = `bold ${fontSize}px "Microsoft JhengHei", sans-serif`;
+        context.textAlign = 'center';
+        context.textBaseline = 'middle';
+        context.fillText('H', x + size/2, y + size/2 + (fontSize * 0.03));
+        context.restore();
+    }
+
+    // 完美兩端對齊
+    function drawJustifiedText(context, text, x, y, maxWidth) {
+        const textLength = text.length;
+        if (textLength <= 1) {
+            context.fillText(text, x, y);
+            return;
+        }
+
+        let totalNormalWidth = 0;
+        for (let i = 0; i < textLength; i++) {
+            totalNormalWidth += context.measureText(text[i]).width;
+        }
+
+        const totalSpacing = maxWidth - totalNormalWidth;
+        const letterSpacing = totalSpacing / (textLength - 1);
+
+        let currentX = x;
+        for (let i = 0; i < textLength; i++) {
+            context.fillText(text[i], currentX, y);
+            currentX += context.measureText(text[i]).width + letterSpacing;
+        }
+    }
+
+    // 核心排版引擎
     function generateSynthesis() {
         if (!cropper) return;
 
-        // 建立超高解析度畫布輸出（1200 x 1200 px 方形，確保印刷不模糊）
         const canvasSize = 1200;
         canvas.width = canvasSize;
         canvas.height = canvasSize;
 
-        // 取得使用者選取的裁切影像數據並繪製到大畫布上
         const croppedCanvas = cropper.getCroppedCanvas({
             width: canvasSize,
-            height: canvasSize
+            height: canvasSize,
+            imageSmoothingEnabled: true,
+            imageSmoothingQuality: 'high'
         });
         
+        if (!croppedCanvas) return;
         ctx.drawImage(croppedCanvas, 0, 0, canvasSize, canvasSize);
 
-        // --- 行政標準規格：3公分底框在大圖中的精準比例計算 ---
-        // 當總高為 1200px 時，依照比例 3公分底框的最佳渲染高度為 110 px
-        const barHeight = 110; 
-        const barY = canvasSize - barHeight;
+        // 幾何規格設定 (4公分高度與1.5公分留白比例演算)
+        const barHeight = 148; 
+        const bottomMargin = 55;
+        const barY = canvasSize - barHeight - bottomMargin;
 
-        // 繪製與照片完美對齊的純白底框
+        // 繪製純白底框
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, barY, canvasSize, barHeight);
 
-        // 取得證號並組合規範文字
-        const certNo = certNumberInput.value.trim();
-        const mainText = `臺北市 旅館登記證 第 ${certNo} 號`;
+        const certNo = certNumberInput.value.trim() || '000';
+        const zhText = `臺北市 旅館登記證 第 ${certNo} 號`;
+        const enText = `Taipei City Hotel Registration Certificate No. ${certNo}`;
 
-        // 設定字體：微軟正黑體、粗體(bold)、66級字（66px）
-        ctx.font = "bold 80px 'Microsoft JhengHei', '微軟正黑體', sans-serif";
+        const logoSize = barHeight * 0.84; 
+        let logoWidth = logoSize;
+        if (uploadedLogoImg) {
+            logoWidth = logoSize * (uploadedLogoImg.width / uploadedLogoImg.height);
+        }
+
+        const paddingX = 45;
+        const logoX = paddingX;
+        const logoY = barY + (barHeight - logoSize) / 2;
+
+        // 1. 繪製標識
+        if (uploadedLogoImg) {
+            ctx.drawImage(uploadedLogoImg, logoX, logoY, logoWidth, logoSize);
+        } else {
+            drawDefaultLogo(ctx, logoX, logoY, logoSize);
+        }
+        
+        // 計算文字可用寬度
+        const textStartX = logoX + logoWidth + 35;
+        const textEndX = canvasSize - paddingX;
+        const textAvailableWidth = textEndX - textStartX;
+
+        // 2. 繪製雙語排版文字
+        ctx.fillStyle = '#000000';
+        ctx.textAlign = 'left';
         ctx.textBaseline = 'middle';
 
-        // 量測指定 80 級字體在畫布上的實際總寬度
-        const textWidth = ctx.measureText(mainText).width;
+        // 第一行：中文超粗黑體
+        ctx.font = zhFontSetting;
+        drawJustifiedText(ctx, zhText, textStartX, barY + (barHeight * 0.35), textAvailableWidth);
 
-        // --- 標識（Logo）填滿規格計算 ---
-        // 為了完美填滿底框且兼顧美觀，Logo 高度設定為底框高（110px）的 90%，上下保留極微精緻空隙
-        const logoHeight = barHeight * 0.90; 
-        let logoWidth = logoHeight; // 預設 1:1 比例
+        // 第二行：英文清晰有力粗體
+        ctx.font = enFontSetting;
+        drawJustifiedText(ctx, enText, textStartX, barY + (barHeight * 0.72), textAvailableWidth);
 
-        if (uploadedLogoImg) {
-            // 如果上傳了非正方形 Logo，依原圖比例縮放寬度
-            const imgRatio = uploadedLogoImg.width / uploadedLogoImg.height;
-            logoWidth = logoHeight * imgRatio;
-        }
-
-        const spacing = 25; // 標識與文字之間的專業排版間距（25px）
-
-        // 計算整串「標識 + 間距 + 文字」的總寬度，用於整體水平置中排版
-        let totalContentWidth = textWidth;
-        if (uploadedLogoImg) {
-            totalContentWidth += (logoWidth + spacing);
-        }
-
-        // 決定起點 X 座標與 Y 軸核心置中線
-        let currentX = (canvasSize - totalContentWidth) / 2;
-        const centerY = barY + (barHeight / 2);
-
-        // 繪製旅館標識（置於文字正前方）
-        if (uploadedLogoImg) {
-            const logoY = centerY - (logoHeight / 2);
-            ctx.drawImage(uploadedLogoImg, currentX, logoY, logoWidth, logoHeight);
-            currentX += logoWidth + spacing; // 移動 X 軸留供文字繪製
-        }
-
-        // 繪製登記證核心文字
-        ctx.fillStyle = '#000000'; // 黑色粗體字
-        ctx.fillText(mainText, currentX, centerY);
-
-        // 5. 將結果輸出至網頁預覽
-        const finalDataURL = canvas.toDataURL('image/jpeg', 0.95);
+        // 3. 輸出最終高解析度結果
+        const finalDataURL = canvas.toDataURL('image/jpeg', 0.98);
         resultPreview.src = finalDataURL;
         
-        // 顯示結果
         placeholderText.style.display = 'none';
         resultPreview.style.display = 'block';
         
-        // 設定下載連結與檔名
         downloadBtn.href = finalDataURL;
-        downloadBtn.download = `臺北市旅館業登記證照片_${certNo || '未填證號'}.jpg`;
+        downloadBtn.download = `臺北市旅館業登記證照片_${certNo}.jpg`;
         downloadBtn.style.display = 'block';
     }
 </script>
