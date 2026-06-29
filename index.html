@@ -423,7 +423,7 @@
         ctx.fillRect(0, barY, canvasSize, barHeight);
 
         const certNo = certNumberInput.value.trim() || '000';
-        const zhText = `臺北市 旅館登記證 第 ${certNo} 號`;
+        const zhText = `臺南市 旅館登記證 第 ${certNo} 號`;
         const enText = `Taipei City Hotel Registration Certificate No. ${certNo}`;
 
         const logoSize = barHeight * 0.84; 
@@ -469,7 +469,7 @@
         resultPreview.style.display = 'block';
         
         downloadBtn.href = finalDataURL;
-        downloadBtn.download = `臺北市旅館業登記證照片_${certNo}.jpg`;
+        downloadBtn.download = `臺南市旅館業登記證照片_${certNo}.jpg`;
         downloadBtn.style.display = 'block';
     }
 </script>
